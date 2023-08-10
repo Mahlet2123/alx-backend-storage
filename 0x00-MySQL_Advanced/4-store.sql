@@ -1,6 +1,6 @@
 -- creates a trigger that decreases the quantity of an item after adding a new order.
 DELIMITER $$
-DROP TRIGGER decrease_quantity$$
+DROP TRIGGER IF EXISTS decrease_quantity$$
 CREATE TRIGGER decrease_quantity AFTER INSERT ON orders
 FOR EACH ROW
 BEGIN
