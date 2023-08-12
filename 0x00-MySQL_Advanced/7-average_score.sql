@@ -1,23 +1,43 @@
--- Creates a stored procedure ComputeAverageScoreForUser that
--- computes and stores the average score for a student.
-DROP PROCEDURE IF EXISTS ComputeAverageScoreForUser;
+-- creates a stored procedure ComputeAverageScoreForUser
+-- that computes and store the average score for a student. 
 DELIMITER $$
-CREATE PROCEDURE ComputeAverageScoreForUser (user_id INT)
+DROP PROCEDURE IF EXISTS ComputeAverageScoreForUser;
+CREATE PROCEDURE ComputeAverageScoreForUser(IN user_id INT)
 BEGIN
-    DECLARE total_score INT DEFAULT 0;
-    DECLARE projects_count INT DEFAULT 0;
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE current_score FLOAT;
+    DECLARE average FLOAT;
+    DECLARE total_score FLOAT DEFAULT 0.0;
+    DECLARE total_count INT DEFAULT 0;
 
-    SELECT SUM(score)
-        INTO total_score
-        FROM corrections
-        WHERE corrections.user_id = user_id;
-    SELECT COUNT(*)
-        INTO projects_count
-        FROM corrections
+    
+    -- Declare a cursor
+    DECLARE score_cursor CURSOR FOR SELECT score FROM corrections 
         WHERE corrections.user_id = user_id;
 
-    UPDATE users
-        SET users.average_score = IF(projects_count = 0, 0, total_score / projects_count)
-        WHERE users.id = user_id;
-END $$
+    -- Declare NOT FOUND handler
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN score_cursor;
+
+    my_loop: LOOP
+        FETCH score_cursor INTO current_score;
+        IF done THEN
+            LEAVE my_loop;
+        END IF;
+        
+        -- total score for a student
+        SET total_score = total_score + current_score;
+        SET total_count = total_count + 1;
+        
+    END LOOP my_loop;
+    CLOSE score_cursor;
+
+    IF total_count THEN
+        SET average = total_score / total_count;
+    END IF;
+
+    UPDATE users SET average_score = average WHERE users.id = user_id;
+END;
+$$
 DELIMITER ;
