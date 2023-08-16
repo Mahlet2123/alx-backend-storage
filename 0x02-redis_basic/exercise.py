@@ -38,11 +38,11 @@ class Cache():
         convert redis return value to string
         return self.get(key, fn=lambda d: d.decode("utf-8"))
         """
-        return self.get(key, decode_key())
+        return self.get(key, fn = decode_key())
 
     def get_int(self, key: str) -> int:
         """ convert redis return value into int """
-        return self.get(key, int())
+        return self.get(key, fn = int())
 
     @staticmethod
     def decode_key(value: bytes) -> str:
