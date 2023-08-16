@@ -47,4 +47,4 @@ class Cache():
     @staticmethod
     def decode_key(value: bytes) -> str:
         """ decode_key static method """
-        return value.decode("utf8")
+        return value.decode("utf-8")
