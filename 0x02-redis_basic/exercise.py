@@ -36,15 +36,9 @@ class Cache():
     def get_str(self, key: str) -> str:
         """
         convert redis return value to string
-        return self.get(key, fn=lambda d: d.decode("utf-8"))
         """
-        return self.get(key, fn=decode_key())
+        return self.get(key, fn=lambda x: x.decode("utf-8"))
 
     def get_int(self, key: str) -> int:
         """ convert redis return value into int """
-        return self.get(key, fn=int())
-
-    @staticmethod
-    def decode_key(value: bytes) -> str:
-        """ decode_key static method """
-        return value.decode("utf-8")
+        return self.get(key, fn=lambda x: int(x))
