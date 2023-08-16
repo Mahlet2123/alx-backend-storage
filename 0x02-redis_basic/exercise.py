@@ -32,7 +32,8 @@ class Cache():
 
     def get_str(self, key: str):
         """ convert redis return value to string """
-        return self.get(key, decode_key())
+        #return self.get(key, decode_key())
+        return self.get(key, fn=lambda d: d.decode("utf-8"))
 
     def get_int(self):
         """ convert redis return value into int """
