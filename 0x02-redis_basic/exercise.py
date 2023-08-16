@@ -20,7 +20,10 @@ class Cache():
         self._redis.set(random_key, data)
         return random_key
 
-    def get(self, key: str, fn: Optional[Callable] = None):
+    def get(
+            self,
+            key: str, fn: Optional[Callable] = None
+            ) -> Union[str, bytes, int, float]:
         """ get value from redis """
         value = self._redis.get(key)
         if value:
@@ -30,12 +33,14 @@ class Cache():
             return None
         return value
 
-    def get_str(self, key: str):
-        """ convert redis return value to string 
-        #return self.get(key, decode_key()) """
+    def get_str(self, key: str) -> str:
+        """
+        convert redis return value to string
         return self.get(key, fn=lambda d: d.decode("utf-8"))
+        """
+        return self.get(key, decode_key())
 
-    def get_int(self):
+    def get_int(self, key: str) -> int:
         """ convert redis return value into int """
         return self.get(key, int())
 
